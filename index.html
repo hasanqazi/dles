@@ -11,7 +11,7 @@
             body {
                 display: flex;
                 justify-content: center;
-                background: #f3f4f6;
+                background: #1a0b2e;
             }
 
             .page-wrapper {
@@ -22,9 +22,9 @@
             }
 
             .left-sidebar, .right-sidebar {
-                background: #e5e7eb;
-                border-left: 1px solid #d1d5db;
-                border-right: 1px solid #d1d5db;
+                background: #16082a;
+                border-left: 1px solid #2d1b4e;
+                border-right: 1px solid #2d1b4e;
             }
 
             .left-sidebar {
@@ -44,17 +44,17 @@
     </style>
 </head>
 
-<body class="bg-gray-100 h-screen">
+<body class="h-screen" style="background: #1a0b2e;">
 
 <div class="page-wrapper h-full">
 
     <div class="left-sidebar hidden lg:block"></div>
 
-    <div class="app-container h-full flex overflow-hidden bg-gray-100">
-        <div class="w-80 bg-white shadow-lg p-6 overflow-y-auto">
+    <div class="app-container h-full flex overflow-hidden" style="background: #1a0b2e;">
+        <div class="w-80 shadow-lg p-6 overflow-y-auto" style="background: #2d1b4e;">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-xl font-bold text-gray-800">DLES</h2>
-                <button id="createGroupBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold w-8 h-8 rounded-lg transition duration-200 flex items-center justify-center text-xl leading-none pb-1">
+                <h2 class="text-xl font-bold" style="color: #fbbf24;">DLES</h2>
+                <button id="createGroupBtn" class="font-bold w-8 h-8 rounded-lg transition duration-200 flex items-center justify-center text-xl leading-none pb-1" style="background: #7c3aed; color: #fbbf24;">
                     +
                 </button>
             </div>
@@ -64,8 +64,8 @@
         <div class="flex-1 p-8 overflow-y-auto">
             <div class="max-w-2xl mx-auto">
                 <div class="flex justify-between items-center mb-8">
-                    <h1 id="currentGroupTitle" class="text-3xl font-bold text-gray-800">Select a Group</h1>
-                    <button id="openAllBtn" class="hidden bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-200">
+                    <h1 id="currentGroupTitle" class="text-3xl font-bold" style="color: #fbbf24;">Select a Group</h1>
+                    <button id="openAllBtn" class="hidden font-semibold py-2 px-6 rounded-lg transition duration-200" style="background: #fbbf24; color: #1a0b2e;">
                         Open All Links
                     </button>
                 </div>
@@ -78,24 +78,24 @@
 
 </div>
 
-<div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
-        <h3 class="text-2xl font-bold mb-4 text-gray-800">Create New Dle</h3>
-        <input type="text" id="groupName" placeholder="Group Name" class="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+<div id="modal" class="hidden fixed inset-0 flex items-center justify-center z-50" style="background: rgba(26, 11, 46, 0.85);">
+    <div class="rounded-lg p-8 max-w-md w-full mx-4" style="background: #2d1b4e;">
+        <h3 class="text-2xl font-bold mb-4" style="color: #fbbf24;">Create New Dle</h3>
+        <input type="text" id="groupName" placeholder="Group Name" class="w-full px-4 py-2 rounded-lg mb-4 focus:outline-none focus:ring-2" style="background: #1a0b2e; border: 1px solid #7c3aed; color: #fbbf24; focus:ring-color: #fbbf24;">
         <div id="linkInputs" class="space-y-3 mb-4">
             <div class="link-input-group">
-                <input type="text" placeholder="Link Name" class="link-name w-full px-4 py-2 border border-gray-300 rounded-lg mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <input type="url" placeholder="https://example.com" class="link-url w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" placeholder="Link Name" class="link-name w-full px-4 py-2 rounded-lg mb-2 focus:outline-none focus:ring-2" style="background: #1a0b2e; border: 1px solid #7c3aed; color: #fbbf24;">
+                <input type="url" placeholder="https://dle.com" class="link-url w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2" style="background: #1a0b2e; border: 1px solid #7c3aed; color: #fbbf24;">
             </div>
         </div>
-        <button id="addLinkBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg mb-4 transition duration-200">
+        <button id="addLinkBtn" class="font-semibold py-2 px-4 rounded-lg mb-4 transition duration-200" style="background: #1a0b2e; color: #fbbf24;">
             + Add Another Link
         </button>
         <div class="flex gap-3">
-            <button id="saveGroupBtn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200">
+            <button id="saveGroupBtn" class="flex-1 font-semibold py-2 px-4 rounded-lg transition duration-200" style="background: #7c3aed; color: #fbbf24;">
                 Save Group
             </button>
-            <button id="cancelBtn" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-2 px-4 rounded-lg transition duration-200">
+            <button id="cancelBtn" class="flex-1 font-semibold py-2 px-4 rounded-lg transition duration-200" style="background: #1a0b2e; color: #fbbf24;">
                 Cancel
             </button>
         </div>
@@ -168,23 +168,28 @@
             container.className = 'flex items-center gap-2';
             
             const btn = document.createElement('button');
-            btn.className = 'flex-1 text-left px-4 py-3 rounded-lg hover:bg-blue-50 transition duration-200 font-medium text-gray-700';
+            btn.className = 'flex-1 text-left px-4 py-3 rounded-lg transition duration-200 font-medium';
+            btn.style.color = '#e9d5ff';
+            btn.style.background = 'transparent';
             btn.textContent = groupName;
+            btn.onmouseover = () => btn.style.background = '#3d2564';
+            btn.onmouseout = () => {
+                if (currentGroup !== groupName) {
+                    btn.style.background = 'transparent';
+                }
+            };
             btn.onclick = () => selectGroup(groupName);
             
             const starBtn = document.createElement('button');
-            starBtn.className = 'w-8 h-8 flex items-center justify-center text-lg hover:bg-gray-100 rounded transition duration-200';
+            starBtn.className = 'w-8 h-8 flex items-center justify-center text-lg rounded transition duration-200';
+            starBtn.style.color = '#fbbf24';
             starBtn.innerHTML = localStorage.getItem('activeGroup') === groupName ? '★' : '☆';
+            starBtn.onmouseover = () => starBtn.style.background = '#3d2564';
+            starBtn.onmouseout = () => starBtn.style.background = 'transparent';
             starBtn.onclick = (e) => {
                 e.stopPropagation();
                 localStorage.setItem('activeGroup', groupName);
                 renderGroupList();
-                const activeGroupButtons = document.querySelectorAll('#groupList button:first-child');
-                activeGroupButtons.forEach((b, idx) => {
-                    if (Object.keys(linkGroups)[idx] === groupName) {
-                        b.classList.add('bg-blue-100', 'text-blue-700');
-                    }
-                });
             };
             
             container.appendChild(btn);
@@ -213,17 +218,27 @@
         
         currentLinks.forEach(link => {
             const btn = document.createElement('button');
-            btn.className = 'w-full bg-white hover:bg-blue-50 text-left px-6 py-4 rounded-lg shadow hover:shadow-md transition duration-200 text-lg font-medium text-blue-600';
+            btn.className = 'w-full text-left px-6 py-4 rounded-lg shadow-md transition duration-200 text-lg font-medium';
+            btn.style.background = '#7c3aed';
+            btn.style.color = '#fbbf24';
             btn.textContent = link.name;
+            btn.onmouseover = () => {
+                btn.style.background = '#6d28d9';
+            };
+            btn.onmouseout = () => {
+                btn.style.background = '#7c3aed';
+            };
             btn.onclick = () => window.open(link.url, '_blank');
             linkList.appendChild(btn);
         });
 
         document.querySelectorAll('#groupList button:first-child').forEach((btn, idx) => {
             if (Object.keys(linkGroups)[idx] === groupName) {
-                btn.classList.add('bg-blue-100', 'text-blue-700');
+                btn.style.background = '#3d2564';
+                btn.style.color = '#fbbf24';
             } else {
-                btn.classList.remove('bg-blue-100', 'text-blue-700');
+                btn.style.background = 'transparent';
+                btn.style.color = '#e9d5ff';
             }
         });
         
@@ -235,8 +250,8 @@
         document.getElementById('groupName').value = '';
         document.getElementById('linkInputs').innerHTML = `
             <div class="link-input-group">
-                <input type="text" placeholder="Link Name" class="link-name w-full px-4 py-2 border border-gray-300 rounded-lg mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <input type="url" placeholder="https://example.com" class="link-url w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" placeholder="Link Name" class="link-name w-full px-4 py-2 rounded-lg mb-2 focus:outline-none focus:ring-2" style="background: #1a0b2e; border: 1px solid #7c3aed; color: #fbbf24;">
+                <input type="url" placeholder="https://dle.com" class="link-url w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2" style="background: #1a0b2e; border: 1px solid #7c3aed; color: #fbbf24;">
             </div>
         `;
     };
@@ -250,8 +265,8 @@
         const newInput = document.createElement('div');
         newInput.className = 'link-input-group';
         newInput.innerHTML = `
-            <input type="text" placeholder="Link Name" class="link-name w-full px-4 py-2 border border-gray-300 rounded-lg mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <input type="url" placeholder="https://example.com" class="link-url w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <input type="text" placeholder="Link Name" class="link-name w-full px-4 py-2 rounded-lg mb-2 focus:outline-none focus:ring-2" style="background: #1a0b2e; border: 1px solid #7c3aed; color: #fbbf24;">
+            <input type="url" placeholder="https://example.com" class="link-url w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2" style="background: #1a0b2e; border: 1px solid #7c3aed; color: #fbbf24;">
         `;
         linkInputs.appendChild(newInput);
     };
