@@ -79,18 +79,23 @@
 </div>
 
 <div id="modal" class="hidden fixed inset-0 flex items-center justify-center z-50" style="background: rgba(26, 11, 46, 0.85);">
-    <div class="rounded-lg p-8 max-w-md w-full mx-4" style="background: #2d1b4e;">
+    <div class="rounded-lg p-8 max-w-md w-full mx-4 max-h-[90vh] flex flex-col" style="background: #2d1b4e;">
         <h3 class="text-2xl font-bold mb-4" style="color: #fbbf24;">Create New Dle</h3>
         <input type="text" id="groupName" placeholder="Group Name" class="w-full px-4 py-2 rounded-lg mb-4 focus:outline-none focus:ring-2" style="background: #1a0b2e; border: 1px solid #7c3aed; color: #fbbf24;">
-        <div id="linkInputs" class="space-y-3 mb-4">
+        <div id="linkInputs" class="space-y-3 mb-4 overflow-y-auto pr-2" style="max-height: 50vh;">
             <div class="link-input-group">
                 <input type="text" placeholder="Link Name" class="link-name w-full px-4 py-2 rounded-lg mb-2 focus:outline-none focus:ring-2" style="background: #1a0b2e; border: 1px solid #7c3aed; color: #fbbf24;">
                 <input type="url" placeholder="https://dle.com" class="link-url w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2" style="background: #1a0b2e; border: 1px solid #7c3aed; color: #fbbf24;">
             </div>
         </div>
-        <button id="addLinkBtn" class="font-semibold py-2 px-4 rounded-lg mb-4 transition duration-200" style="background: #1a0b2e; color: #fbbf24;">
-            + Add Another Link
-        </button>
+        <div class="flex gap-3 mb-4">
+            <button id="addLinkBtn" class="flex-1 font-semibold py-2 px-4 rounded-lg transition duration-200" style="background: #1a0b2e; color: #fbbf24;">
+                + Add Another Link
+            </button>
+            <button id="autoNameBtn" class="flex-1 font-semibold py-2 px-4 rounded-lg transition duration-200" style="background: #1a0b2e; color: #fbbf24;">
+                Auto Name
+            </button>
+        </div>
         <div class="flex gap-3">
             <button id="saveGroupBtn" class="flex-1 font-semibold py-2 px-4 rounded-lg transition duration-200" style="background: #7c3aed; color: #fbbf24;">
                 Save Group
@@ -266,9 +271,44 @@
         newInput.className = 'link-input-group';
         newInput.innerHTML = `
             <input type="text" placeholder="Link Name" class="link-name w-full px-4 py-2 rounded-lg mb-2 focus:outline-none focus:ring-2" style="background: #1a0b2e; border: 1px solid #7c3aed; color: #fbbf24;">
-            <input type="url" placeholder="https://example.com" class="link-url w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2" style="background: #1a0b2e; border: 1px solid #7c3aed; color: #fbbf24;">
+            <input type="url" placeholder="https://dle.com" class="link-url w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2" style="background: #1a0b2e; border: 1px solid #7c3aed; color: #fbbf24;">
         `;
         linkInputs.appendChild(newInput);
+    };
+
+    document.getElementById('autoNameBtn').onclick = async () => {
+        const linkInputGroups = document.querySelectorAll('.link-input-group');
+        const autoNameBtn = document.getElementById('autoNameBtn');
+        autoNameBtn.textContent = 'loading..';
+        autoNameBtn.disabled = true;
+
+        for (const group of linkInputGroups) {
+            const nameInput = group.querySelector('.link-name');
+            const urlInput = group.querySelector('.link-url');
+            const url = urlInput.value.trim();
+
+            if (url && !nameInput.value.trim()) {
+                try {
+                    const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
+                    const data = await response.json();
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(data.contents, 'text/html');
+                    const title = doc.querySelector('title')?.textContent || new URL(url).hostname;
+                    nameInput.value = title.trim();
+                } catch (error) {
+                    console.error('error', error);
+                    try {
+                        const hostname = new URL(url).hostname.replace('www.', '');
+                        nameInput.value = hostname;
+                    } catch (e) {
+                        console.error('url not found', e);
+                    }
+                }
+            }
+        }
+
+        autoNameBtn.textContent = 'Auto Name';
+        autoNameBtn.disabled = false;
     };
 
     document.getElementById('saveGroupBtn').onclick = () => {
