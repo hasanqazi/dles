@@ -137,6 +137,14 @@
     let linkGroups = {};
     let currentGroup = null;
 
+    function isChrome() {
+        return /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+    }
+
+    function isFirefox() {
+        return /Firefox/.test(navigator.userAgent);
+    }
+
     function init() {
         loadGroups();
         renderGroupList();
@@ -164,6 +172,60 @@
         localStorage.setItem('linkGroups', JSON.stringify(customGroups));
     }
 
+    function copyGroup(groupName) {
+        const links = linkGroups[groupName];
+        if (!links) return;
+        
+        let newGroupName = `${groupName} (copy)`;
+        let counter = 1;
+        
+        while (linkGroups[newGroupName]) {
+            counter++;
+            newGroupName = `${groupName} (copy ${counter})`;
+        }
+        
+        linkGroups[newGroupName] = JSON.parse(JSON.stringify(links));
+        saveGroups();
+        renderGroupList();
+        selectGroup(newGroupName);
+    }
+
+    function renameGroup(oldName) {
+        if (oldName === 'Default') {
+            alert('Cannot rename the Default group');
+            return;
+        }
+
+        const newName = prompt('Enter new group name:', oldName);
+        
+        if (!newName || newName.trim() === '') {
+            return;
+        }
+
+        const trimmedName = newName.trim();
+
+        if (trimmedName === oldName) {
+            return;
+        }
+
+        if (linkGroups[trimmedName]) {
+            alert('A group with this name already exists');
+            return;
+        }
+
+        linkGroups[trimmedName] = linkGroups[oldName];
+        delete linkGroups[oldName];
+
+        if (currentGroup === oldName) {
+            currentGroup = trimmedName;
+            localStorage.setItem('activeGroup', trimmedName);
+        }
+
+        saveGroups();
+        renderGroupList();
+        selectGroup(trimmedName);
+    }
+
     function renderGroupList() {
         const groupList = document.getElementById('groupList');
         groupList.innerHTML = '';
@@ -188,7 +250,7 @@
             const starBtn = document.createElement('button');
             starBtn.className = 'w-8 h-8 flex items-center justify-center text-lg rounded transition duration-200';
             starBtn.style.color = '#fbbf24';
-            starBtn.innerHTML = localStorage.getItem('activeGroup') === groupName ? '★' : '☆';
+            starBtn.textContent = localStorage.getItem('activeGroup') === groupName ? '🔴' : '⭕';
             starBtn.onmouseover = () => starBtn.style.background = '#3d2564';
             starBtn.onmouseout = () => starBtn.style.background = 'transparent';
             starBtn.onclick = (e) => {
@@ -196,9 +258,35 @@
                 localStorage.setItem('activeGroup', groupName);
                 renderGroupList();
             };
+
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'w-8 h-8 flex items-center justify-center text-lg rounded transition duration-200';
+            copyBtn.style.color = '#fbbf24';
+            copyBtn.textContent = '📋';
+            copyBtn.title = 'Copy group';
+            copyBtn.onmouseover = () => copyBtn.style.background = '#3d2564';
+            copyBtn.onmouseout = () => copyBtn.style.background = 'transparent';
+            copyBtn.onclick = (e) => {
+                e.stopPropagation();
+                copyGroup(groupName);
+            };
+
+            const renameBtn = document.createElement('button');
+            renameBtn.className = 'w-8 h-8 flex items-center justify-center text-lg rounded transition duration-200';
+            renameBtn.style.color = '#fbbf24';
+            renameBtn.textContent = '✏️';
+            renameBtn.title = 'Rename group';
+            renameBtn.onmouseover = () => renameBtn.style.background = '#3d2564';
+            renameBtn.onmouseout = () => renameBtn.style.background = 'transparent';
+            renameBtn.onclick = (e) => {
+                e.stopPropagation();
+                renameGroup(groupName);
+            };
             
             container.appendChild(btn);
             container.appendChild(starBtn);
+            container.appendChild(copyBtn);
+            container.appendChild(renameBtn);
             groupList.appendChild(container);
         });
     }
@@ -216,16 +304,70 @@
         
         const currentLinks = linkGroups[groupName];
         openAllBtn.onclick = () => {
-            for (let i = currentLinks.length - 1; i >= 0; i--) {
-                window.open(currentLinks[i].url, '_blank');
-            }
+            const links = isFirefox() ? [...currentLinks].reverse() : currentLinks;
+            links.forEach(link => {
+                window.open(link.url, '_blank');
+            });
         };
         
-        currentLinks.forEach(link => {
+        let draggedIndex = null;
+
+        currentLinks.forEach((link, index) => {
+            const container = document.createElement('div');
+            container.className = 'flex items-center gap-2';
+            container.draggable = true;
+            container.style.cursor = 'grab';
+            container.style.transition = 'opacity 0.2s';
+            container.style.userSelect = 'none';
+            container.style.padding = '0.5rem';
+            container.style.borderRadius = '0.5rem';
+            
+            container.ondragstart = (e) => {
+                draggedIndex = index;
+                container.style.opacity = '0.5';
+                e.dataTransfer.effectAllowed = 'move';
+            };
+            
+            container.ondragend = (e) => {
+                container.style.opacity = '1';
+            };
+            
+            container.ondragover = (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                container.style.borderTop = '2px solid #fbbf24';
+            };
+            
+            container.ondragleave = (e) => {
+                container.style.borderTop = '';
+            };
+            
+            container.ondrop = (e) => {
+                e.preventDefault();
+                container.style.borderTop = '';
+                if (draggedIndex !== null && draggedIndex !== index) {
+                    const draggedLink = currentLinks[draggedIndex];
+                    currentLinks.splice(draggedIndex, 1);
+                    currentLinks.splice(index, 0, draggedLink);
+                    saveGroups();
+                    selectGroup(groupName);
+                }
+            };
+
+            const dragHandle = document.createElement('div');
+            dragHandle.textContent = '⋮⋮';
+            dragHandle.style.color = '#fbbf24';
+            dragHandle.style.cursor = 'grab';
+            dragHandle.style.fontSize = '1.2rem';
+            dragHandle.style.fontWeight = 'bold';
+            dragHandle.style.flexShrink = '0';
+            container.appendChild(dragHandle);
+            
             const btn = document.createElement('button');
-            btn.className = 'w-full text-left px-6 py-4 rounded-lg shadow-md transition duration-200 text-lg font-medium';
+            btn.className = 'flex-1 text-left px-6 py-4 rounded-lg shadow-md transition duration-200 text-lg font-medium';
             btn.style.background = '#7c3aed';
             btn.style.color = '#fbbf24';
+            btn.style.pointerEvents = 'auto';
             btn.textContent = link.name;
             btn.onmouseover = () => {
                 btn.style.background = '#6d28d9';
@@ -234,7 +376,24 @@
                 btn.style.background = '#7c3aed';
             };
             btn.onclick = () => window.open(link.url, '_blank');
-            linkList.appendChild(btn);
+            
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'w-10 h-10 flex items-center justify-center rounded-lg transition duration-200 text-lg';
+            deleteBtn.style.background = '#7c3aed';
+            deleteBtn.style.color = '#fbbf24';
+            deleteBtn.textContent = '🗑️';
+            deleteBtn.title = 'Delete link';
+            deleteBtn.onmouseover = () => deleteBtn.style.background = '#6d28d9';
+            deleteBtn.onmouseout = () => deleteBtn.style.background = '#7c3aed';
+            deleteBtn.onclick = () => {
+                linkGroups[groupName].splice(index, 1);
+                saveGroups();
+                selectGroup(groupName);
+            };
+            
+            container.appendChild(btn);
+            container.appendChild(deleteBtn);
+            linkList.appendChild(container);
         });
 
         document.querySelectorAll('#groupList button:first-child').forEach((btn, idx) => {
